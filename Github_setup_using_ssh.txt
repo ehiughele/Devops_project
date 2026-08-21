@@ -1,0 +1,63 @@
+ Setting Up SSH Keys for GitHub
+Step 1: Check for existing keys
+
+ls -al ~/.ssh
+Look for id_ed25519.pub. If it exists, skip to Step 4. If not, continue.
+
+Step 2: Generate a new SSH key
+
+ssh-keygen -t ed25519 -C "your_email@example.com"
+-t ed25519 → key type (modern, secure)
+-C → a label (your email)
+Press Enter 3 times to accept defaults (location, empty passphrase, confirm).
+
+This creates two files:
+
+id_ed25519 → private key 🔒 (never share)
+id_ed25519.pub → public key ✅ (goes to GitHub)
+Step 3: Start ssh-agent and add the key
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+Step 4: Copy the public key
+
+cat ~/.ssh/id_ed25519.pub
+Copy the whole line (starts with ssh-ed25519, ends with your email).
+
+Mac shortcut: pbcopy < ~/.ssh/id_ed25519.pub
+
+Step 5: Add it to GitHub
+Go to github.com/settings/keys
+Click New SSH key
+Title: e.g. MacBook
+Key type: Authentication Key
+Paste the key → Add SSH key
+Step 6: Test the connection
+
+ssh -T git@github.com
+Type yes if prompted. Success looks like:
+
+
+Hi USERNAME! You've successfully authenticated...
+(The "does not provide shell access" note is normal — it worked. ✅)
+
+Step 7: Use the SSH URL for your repo
+URL format
+HTTPS	https://github.com/user/repo.git
+SSH	git@github.com:user/repo.git
+New repo:
+
+
+git remote add origin git@github.com:USERNAME/repo.git
+Switch an existing HTTPS remote to SSH:
+
+
+git remote set-url origin git@github.com:USERNAME/repo.git
+Verify:
+
+
+git remote -v
+Step 8: Push
+
+git push -u origin main
